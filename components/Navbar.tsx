@@ -17,39 +17,42 @@ export function Navbar() {
   };
 
   return (
-    <div className="border-b">
-      <div className="flex items-center justify-between mx-6 my-3">
-        <div className="flex items-center">
-          <Image
-            src="/meilisearch.svg"
-            alt="Meilisearch Logo"
-            width={40}
-            height={40}
-          />
-          <h1 className="pl-6 font-bold text-lg">Meilisearch Demo</h1>
+    <nav className="bg-primary text-primary-foreground shadow-md">
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Image
+              src="/meilisearch.svg"
+              alt="Meilisearch Logo"
+              width={40}
+              height={40}
+            />
+            <h1 className="text-xl font-bold">Meilisearch Demo</h1>
+          </div>
+          <div className="flex-grow mx-4 max-w-2xl">
+            <Input
+              type="text"
+              placeholder="Search..."
+              value={searchText}
+              onChange={handleSearchChange}
+              className="w-full bg-secondary text-secondary-foreground placeholder-secondary-foreground/50"
+            />
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsSettingsOpen(true)}
+            className="text-primary-foreground hover:bg-secondary/50"
+          >
+            <Settings className="h-5 w-5" />
+            <span className="sr-only">Settings</span>
+          </Button>
         </div>
-        <div className="flex-grow mx-4">
-          <Input
-            type="text"
-            placeholder="Search..."
-            value={searchText}
-            onChange={handleSearchChange}
-            className="w-full"
-          />
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsSettingsOpen(true)}
-        >
-          <Settings className="h-5 w-5" />
-          <span className="sr-only">Settings</span>
-        </Button>
       </div>
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
       />
-    </div>
+    </nav>
   );
 }

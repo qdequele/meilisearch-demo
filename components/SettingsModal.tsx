@@ -169,13 +169,15 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Search Configuration</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">
+            Search Configuration
+          </DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-6 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="url" className="text-right">
+            <Label htmlFor="url" className="text-right font-semibold">
               URL
             </Label>
             <div className="col-span-3 flex items-center">
