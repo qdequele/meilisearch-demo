@@ -2,16 +2,19 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Settings } from "lucide-react";
+import { Settings, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SettingsModal } from "@/components/SettingsModal";
 import { useStore } from "@/store/useStore";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export function Navbar() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const { searchText, setSearchText, settings } = useStore();
+  const { searchText, setSearchText, settings, setSettings } = useStore();
   const [settingsLoaded, setSettingsLoaded] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     // Check if settings are loaded from local storage
@@ -19,7 +22,21 @@ export function Navbar() {
     if (storedSettings) {
       setSettingsLoaded(true);
     }
-  }, []);
+
+    // Check for config in URL and load it
+    const config = searchParams.get("config");
+    if (config) {
+      try {
+        const decodedSettings = JSON.parse(atob(config));
+        setSettings(decodedSettings);
+        // Remove the query parameter from the URL
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+      } catch (error) {
+        console.error("Failed to parse config:", error);
+      }
+    }
+  }, [setSettings, searchParams]);
 
   useEffect(() => {
     if (
@@ -32,6 +49,14 @@ export function Navbar() {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
+  };
+
+  const handleShare = () => {
+    const encodedSettings = btoa(JSON.stringify(settings));
+    const shareUrl = `${window.location.origin}?config=${encodedSettings}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      alert("Share URL copied to clipboard!");
+    });
   };
 
   return (
@@ -56,15 +81,26 @@ export function Navbar() {
               className="w-full bg-secondary text-secondary-foreground placeholder-secondary-foreground/50"
             />
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsSettingsOpen(true)}
-            className="text-primary-foreground hover:bg-secondary/50"
-          >
-            <Settings className="h-5 w-5" />
-            <span className="sr-only">Settings</span>
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleShare}
+              className="text-primary-foreground hover:bg-secondary/50"
+            >
+              <Share2 className="h-5 w-5" />
+              <span className="sr-only">Share</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsSettingsOpen(true)}
+              className="text-primary-foreground hover:bg-secondary/50"
+            >
+              <Settings className="h-5 w-5" />
+              <span className="sr-only">Settings</span>
+            </Button>
+          </div>
         </div>
       </div>
       <SettingsModal
