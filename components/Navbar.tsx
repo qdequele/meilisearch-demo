@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,25 @@ import { useStore } from "@/store/useStore";
 
 export function Navbar() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const { searchText, setSearchText } = useStore();
+  const { searchText, setSearchText, settings } = useStore();
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
+
+  useEffect(() => {
+    // Check if settings are loaded from local storage
+    const storedSettings = localStorage.getItem("searchSettings");
+    if (storedSettings) {
+      setSettingsLoaded(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (
+      settingsLoaded &&
+      (!settings.url || !settings.apiKey || !settings.index)
+    ) {
+      setIsSettingsOpen(true);
+    }
+  }, [settings, settingsLoaded]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
